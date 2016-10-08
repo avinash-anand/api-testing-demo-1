@@ -10,6 +10,10 @@ import org.junit.Assert;
 import rest.RestResponseHolder;
 import rest.SingletonRestClient;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class GetStepDefs {
 
     private SingletonRestClient client;
@@ -44,7 +48,12 @@ public class GetStepDefs {
         // For automatic transformation, change DataTable to one of
         // List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.
         // E,K,V must be a scalar (String, Integer, Date, enum etc)
-
+        List<Map<String, String>> list = arg1.asMaps(String.class, String.class);
+        System.out.println(list);
+        for(Map<String, String> map : arg1.asMaps(String.class, String.class)) {
+            String key = map.get("key");
+            String value = map.get("value");
+        }
         System.out.print(response.responseBody);
     }
 
