@@ -1,19 +1,18 @@
-@suite
+@wip
 
-Feature: This feature will test the GET request of a REST API
+Feature: This feature will test the Schema Validation of a REST API
 
-  Scenario: User wants to get registration by id
-    Given User has established GET connection
-    When User requests for registration detail
-    Then User should see "200" as Status code
-    And User should receive following response body
-      | key              | value                |
+  Scenario: Verify the Schema validation of Rest API received
+    Given I send the following parameter as a POST request
+      | Parameter        | Value                |
       | registrationId   | 123456789            |
       | status           | Approved             |
       | registrationDate | 2016-10-24           |
       | processingDate   | 2016-10-25T09:30:47Z |
       | isActive         | true                 |
       | cost             | 100.75               |
+    Then User should receive the following status code
+      | Status Code | 200 |
     And User should receive following response body key and types
       | key              | type     |
       | registrationId   | int      |
@@ -22,7 +21,5 @@ Feature: This feature will test the GET request of a REST API
       | processingDate   | datetime |
       | isActive         | boolean  |
       | cost             | double   |
-
-
-
-
+      |                  | object   |
+      |                  | null     |
