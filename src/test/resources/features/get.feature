@@ -3,9 +3,8 @@
 Feature: This feature will test the GET request of a REST API
 
   Scenario: User wants to get registration by id
-    Given User has established GET connection
-    When User requests for registration detail
-    Then User should see "200" as Status code
+    Given User requests for registration detail
+    Then User should receive "200" as Status code
     And User should receive following response body
       | key              | value                |
       | registrationId   | 123456789            |

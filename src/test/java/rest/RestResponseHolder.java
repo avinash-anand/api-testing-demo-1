@@ -1,6 +1,7 @@
 package rest;
 
-import org.codehaus.jackson.JsonNode;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import javax.ws.rs.core.Response;
 
