@@ -1,9 +1,8 @@
-@wip
-
 Feature: This feature will test the PUT request of a REST API
 
+  @suite
   Scenario: Verify the put request send by rest api
-    Given I send the following parameter as a PUT request
+    Given User sends the following parameters as a registration object as a PUT request
       | Parameter        | Value                |
       | registrationId   | 123456789            |
       | status           | Approved             |
@@ -11,13 +10,13 @@ Feature: This feature will test the PUT request of a REST API
       | processingDate   | 2016-10-25T09:30:47Z |
       | isActive         | true                 |
       | cost             | 100.75               |
-    Then User should receive the following status code
-      | Status Code | 200 |
+    Then User should receive "200" as Status code
     And User should receive following response body
       | key              | value                |
-      | registrationId   | 123456789            |
-      | status           | Approved             |
+      | registrationId   | 987654321            |
+      | status           | Pending              |
       | registrationDate | 2016-10-24           |
       | processingDate   | 2016-10-25T09:30:47Z |
-      | isActive         | true                 |
+      | isActive         | false                |
       | cost             | 100.75               |
+

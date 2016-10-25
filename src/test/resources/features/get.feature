@@ -1,7 +1,8 @@
-@suite
+
 
 Feature: This feature will test the GET request of a REST API
 
+  @suite
   Scenario: User wants to get registration by id
     Given User requests for registration detail
     Then User should receive "200" as Status code

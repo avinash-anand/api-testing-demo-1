@@ -1,9 +1,10 @@
-@suite
+
 
 Feature: This feature will test the POST request of a REST API
 
+  @suite
   Scenario: Verify the post request send by rest api
-    Given User sends the following parameters as a "POST" request
+    Given User sends the following parameters as a registration object as a POST request
       | Parameter        | Value                |
       | registrationId   | 123456789            |
       | status           | Approved             |
@@ -20,3 +21,4 @@ Feature: This feature will test the POST request of a REST API
       | processingDate   | 2016-10-25T09:30:47Z |
       | isActive         | true                 |
       | cost             | 100.75               |
+
