@@ -9,8 +9,11 @@ import cucumber.api.java.en.Then;
 import models.Registration;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rest.RestResponseHolder;
 import rest.SingletonRestClient;
+import utils.PropertyFileReader;
 
 import javax.ws.rs.client.Entity;
 import java.util.Map;
@@ -21,7 +24,8 @@ import static utils.TypeUtils.isOfType;
 
 public class RestStepDefs {
 
-    private String getTargetUri = "http://localhost:9000/registration/123456789";
+    private static final Logger logger = LoggerFactory.getLogger(RestStepDefs.class);
+
     private String postTargetUri = "http://localhost:9000/registration";
     private String putTargetUri = "http://localhost:9000/registration";
     private String deleteTargetUri = "http://localhost:9000/registration/987654321";
@@ -31,6 +35,8 @@ public class RestStepDefs {
     @Given("^User requests for registration detail$")
     public void user_requests_for_registration_detail() throws Throwable {
         SingletonRestClient client = SingletonRestClient.getInstance();
+        String baseUri = PropertyFileReader.getProperty("dev.api.base.uri");
+        String getTargetUri = baseUri + PropertyFileReader.getProperty("api.get.uri");
         response.response = client.getClient().target(getTargetUri).request().get();
         response.responseBody = response.response.readEntity(String.class);
         response.responseStatus = response.response.getStatus();
@@ -84,7 +90,7 @@ public class RestStepDefs {
         response.responseBody = response.response.readEntity(String.class);
         response.responseStatus = response.response.getStatus();
         response.json = new ObjectMapper().readTree(response.responseBody);
-        System.out.println("json = " + response.json);
+        logger.debug("json = {}", response.json);
         response.response.close();
     }
 
