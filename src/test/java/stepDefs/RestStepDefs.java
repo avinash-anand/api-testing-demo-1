@@ -16,6 +16,7 @@ import rest.SingletonRestClient;
 import utils.PropertyFileReader;
 
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Response;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -26,72 +27,41 @@ public class RestStepDefs {
 
     private static final Logger logger = LoggerFactory.getLogger(RestStepDefs.class);
 
-    private String postTargetUri = "http://localhost:9000/registration";
-    private String putTargetUri = "http://localhost:9000/registration";
-    private String deleteTargetUri = "http://localhost:9000/registration/987654321";
     private RestResponseHolder response = new RestResponseHolder();
 
     // GET
-    @Given("^User requests for registration detail$")
-    public void user_requests_for_registration_detail() throws Throwable {
+    @Given("^User requests for registration detail for id \"([^\"]*)\"$")
+    public void user_requests_for_registration_detail(String getId) throws Throwable {
         SingletonRestClient client = SingletonRestClient.getInstance();
-        String baseUri = PropertyFileReader.getProperty("dev.api.base.uri");
-        String getTargetUri = baseUri + PropertyFileReader.getProperty("api.get.uri");
-        response.response = client.getClient().target(getTargetUri).request().get();
-        response.responseBody = response.response.readEntity(String.class);
-        response.responseStatus = response.response.getStatus();
-        response.json = new ObjectMapper().readTree(response.responseBody);
-        response.response.close();
+        String getTargetUri = createTargetUri("api.get.uri") + "/" + getId;
+        storeResponse(client.getClient().target(getTargetUri).request().get());
     }
 
     // POST
     @Given("^User sends the following parameters as a registration object as a POST request$")
     public void user_sends_the_following_parameters_as_a_post_request(DataTable data) throws Throwable {
         SingletonRestClient client = SingletonRestClient.getInstance();
-        Registration model = new Registration();
-        Map<String, String> dataForModel = data.asMap(String.class, String.class);
-        model.registrationId = Integer.parseInt(dataForModel.get("registrationId"));
-        model.cost = Integer.parseInt(dataForModel.get("registrationId"));
-        model.isActive = Boolean.parseBoolean(dataForModel.get("registrationId"));
-        model.processingDate = new DateTime(dataForModel.get("registrationId"));
-        model.registrationDate = new LocalDate(dataForModel.get("registrationId"));
-        model.status = dataForModel.get("registrationId");
-        response.response = client.getClient().target(postTargetUri).request().post(Entity.entity(model, "application/json"));
-        response.responseBody = response.response.readEntity(String.class);
-        response.responseStatus = response.response.getStatus();
-        response.json = new ObjectMapper().readTree(response.responseBody);
-        response.response.close();
+        Registration model = createRegistrationFromDataTable(data);
+        String postTargetUri = createTargetUri("api.post.uri");
+        storeResponse(client.getClient().target(postTargetUri).request().post(Entity.entity(model, "application/json")));
     }
 
-    // POST
+    // PUT
     @Given("^User sends the following parameters as a registration object as a PUT request$")
     public void user_sends_the_following_parameters_as_a_put_request(DataTable data) throws Throwable {
         SingletonRestClient client = SingletonRestClient.getInstance();
-        Registration model = new Registration();
-        Map<String, String> dataForModel = data.asMap(String.class, String.class);
-        model.registrationId = Integer.parseInt(dataForModel.get("registrationId"));
-        model.cost = Integer.parseInt(dataForModel.get("registrationId"));
-        model.isActive = Boolean.parseBoolean(dataForModel.get("registrationId"));
-        model.processingDate = new DateTime(dataForModel.get("registrationId"));
-        model.registrationDate = new LocalDate(dataForModel.get("registrationId"));
-        model.status = dataForModel.get("registrationId");
-        response.response = client.getClient().target(putTargetUri).request().put(Entity.entity(model, "application/json"));
-        response.responseBody = response.response.readEntity(String.class);
-        response.responseStatus = response.response.getStatus();
-        response.json = new ObjectMapper().readTree(response.responseBody);
-        response.response.close();
+        Registration model = createRegistrationFromDataTable(data);
+        String putTargetUri = createTargetUri("api.put.uri");
+        storeResponse(client.getClient().target(putTargetUri).request().put(Entity.entity(model, "application/json")));
     }
 
-    // GET
-    @Given("^User wants to delete registration by id$")
-    public void user_wants_to_delete_registration_by_id() throws Throwable {
+    // DELETE
+    @Given("^User wants to delete registration by id \"([^\"]*)\"$")
+    public void user_wants_to_delete_registration_by_id(String deleteId) throws Throwable {
         SingletonRestClient client = SingletonRestClient.getInstance();
-        response.response = client.getClient().target(deleteTargetUri).request().delete();
-        response.responseBody = response.response.readEntity(String.class);
-        response.responseStatus = response.response.getStatus();
-        response.json = new ObjectMapper().readTree(response.responseBody);
+        String deleteTargetUri = createTargetUri("api.delete.uri") + "/" + deleteId;
+        storeResponse(client.getClient().target(deleteTargetUri).request().delete());
         logger.debug("json = {}", response.json);
-        response.response.close();
     }
 
     @Then("^User should receive \"([^\"]*)\" as Status code$")
@@ -116,6 +86,34 @@ public class RestStepDefs {
             JsonNode node = response.json.get(key);
             assertTrue("expected type - " + type + " - was not equal to actual - node - " + node, isOfType(node, type));
         }
+    }
+
+    private Registration createRegistrationFromDataTable(DataTable dataTable) {
+        Registration model = new Registration();
+        Map<String, String> dataForModel = dataTable.asMap(String.class, String.class);
+        model.registrationId = Integer.parseInt(dataForModel.get("registrationId"));
+        model.status = dataForModel.get("status");
+        model.cost = Double.parseDouble(dataForModel.get("cost"));
+        model.isActive = Boolean.parseBoolean(dataForModel.get("isActive"));
+        model.processingDate = new DateTime(dataForModel.get("processingDate"));
+        model.registrationDate = new LocalDate(dataForModel.get("registrationDate"));
+        return model;
+    }
+
+    private String createTargetUri(String requestTypeParam) {
+        String environment = System.getProperty("environment", "dev");
+        String baseUriParam = environment + ".api.base.uri";
+        System.out.println("baseUriParam = " + baseUriParam);
+        String baseUri = PropertyFileReader.getProperty(baseUriParam);
+        return baseUri + PropertyFileReader.getProperty(requestTypeParam);
+    }
+
+    private void storeResponse(Response resp) throws Throwable {
+        response.response = resp;
+        response.responseBody = response.response.readEntity(String.class);
+        response.responseStatus = response.response.getStatus();
+        response.json = new ObjectMapper().readTree(response.responseBody);
+        response.response.close();
     }
 
 

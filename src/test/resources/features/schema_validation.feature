@@ -21,5 +21,5 @@ Feature: This feature will test the Schema Validation of a REST API
       | processingDate   | datetime |
       | isActive         | boolean  |
       | cost             | double   |
+      | nullKey          | null     |
       |                  | object   |
-      |                  | null     |

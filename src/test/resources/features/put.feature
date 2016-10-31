@@ -19,4 +19,13 @@ Feature: This feature will test the PUT request of a REST API
       | processingDate   | 2016-10-25T09:30:47Z |
       | isActive         | false                |
       | cost             | 100.75               |
+    And User should receive following response body key and types
+      | key              | type     |
+      | registrationId   | int      |
+      | status           | string   |
+      | registrationDate | date     |
+      | processingDate   | datetime |
+      | isActive         | boolean  |
+      | cost             | double   |
+      | nullKey          | null     |
 

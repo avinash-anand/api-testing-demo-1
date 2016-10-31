@@ -14,7 +14,7 @@ public class TypeUtils implements DatePatterns {
             case "datetime": return isValidDateTimePattern(node, dateTimePattern);
             case "double": return node.isDouble();
             case "object": return node.isContainerNode();
-            case "null": return node.isNull();
+            case "null": return (null == node || node.isNull());
             default: throw new RuntimeException("Undefined Type");
         }
     }
