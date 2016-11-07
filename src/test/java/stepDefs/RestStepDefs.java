@@ -21,6 +21,8 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static utils.HeaderUtils.addHeaders;
+import static utils.HttpMethodType.*;
 import static utils.TypeUtils.isOfType;
 
 public class RestStepDefs {
@@ -34,7 +36,7 @@ public class RestStepDefs {
     public void user_requests_for_registration_detail(String getId) throws Throwable {
         SingletonRestClient client = SingletonRestClient.getInstance();
         String getTargetUri = createTargetUri("api.get.uri") + "/" + getId;
-        storeResponse(client.getClient().target(getTargetUri).request().get());
+        storeResponse(addHeaders(client.getClient().target(getTargetUri).request(), GET).get());
     }
 
     // POST
@@ -43,7 +45,7 @@ public class RestStepDefs {
         SingletonRestClient client = SingletonRestClient.getInstance();
         Registration model = createRegistrationFromDataTable(data);
         String postTargetUri = createTargetUri("api.post.uri");
-        storeResponse(client.getClient().target(postTargetUri).request().post(Entity.entity(model, "application/json")));
+        storeResponse(addHeaders(client.getClient().target(postTargetUri).request(), POST).post(Entity.entity(model, "application/json")));
     }
 
     // PUT
@@ -52,7 +54,7 @@ public class RestStepDefs {
         SingletonRestClient client = SingletonRestClient.getInstance();
         Registration model = createRegistrationFromDataTable(data);
         String putTargetUri = createTargetUri("api.put.uri");
-        storeResponse(client.getClient().target(putTargetUri).request().put(Entity.entity(model, "application/json")));
+        storeResponse(addHeaders(client.getClient().target(putTargetUri).request(), PUT).put(Entity.entity(model, "application/json")));
     }
 
     // DELETE
@@ -60,7 +62,7 @@ public class RestStepDefs {
     public void user_wants_to_delete_registration_by_id(String deleteId) throws Throwable {
         SingletonRestClient client = SingletonRestClient.getInstance();
         String deleteTargetUri = createTargetUri("api.delete.uri") + "/" + deleteId;
-        storeResponse(client.getClient().target(deleteTargetUri).request().delete());
+        storeResponse(addHeaders(client.getClient().target(deleteTargetUri).request(), DELETE).delete());
         logger.debug("json = {}", response.json);
     }
 
