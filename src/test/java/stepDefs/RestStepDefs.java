@@ -76,7 +76,12 @@ public class RestStepDefs {
         for (Map<String, String> map : arg1.asMaps(String.class, String.class)) {
             String key = map.get("key");
             String value = map.get("value");
-            assertEquals("expected was not equal to actual", value, response.json.get(key).asText());
+            JsonNode node = response.json;
+            String[] keyNodes = key.split("\\.");
+            for(String keyNode: keyNodes) {
+                node = node.get(keyNode);
+            }
+            assertEquals("expected was not equal to actual", value, node.asText());
         }
     }
 
@@ -85,7 +90,10 @@ public class RestStepDefs {
         for (Map<String, String> map : dataTable.asMaps(String.class, String.class)) {
             String key = map.get("key");
             String type = map.get("type").toLowerCase();
-            JsonNode node = response.json.get(key);
+            JsonNode node = response.json;
+            for(String keyNode: key.split("\\.")) {
+                node = node.get(keyNode);
+            }
             assertTrue("expected type - " + type + " - was not equal to actual - node - " + node, isOfType(node, type));
         }
     }
