@@ -34,6 +34,8 @@ public class RestStepDefs {
     // GET
     @Given("^User requests for registration detail for id \"([^\"]*)\"$")
     public void user_requests_for_registration_detail(String getId) throws Throwable {
+        ClassLoader loader = LoggerFactory.class.getClassLoader();
+//        System.out.println("###################### " + loader.getResource("org/slf4j/spi/LocationAwareLogger.class"));
         SingletonRestClient client = SingletonRestClient.getInstance();
         String getTargetUri = createTargetUri("api.get.uri") + "/" + getId;
         storeResponse(addHeaders(client.getClient().target(getTargetUri).request(), GET).get());
@@ -63,7 +65,7 @@ public class RestStepDefs {
         SingletonRestClient client = SingletonRestClient.getInstance();
         String deleteTargetUri = createTargetUri("api.delete.uri") + "/" + deleteId;
         storeResponse(addHeaders(client.getClient().target(deleteTargetUri).request(), DELETE).delete());
-        logger.debug("json = {}", response.json);
+        logger.info("json = {}", response.json);
     }
 
     @Then("^User should receive \"([^\"]*)\" as Status code$")
@@ -113,7 +115,7 @@ public class RestStepDefs {
     private String createTargetUri(String requestTypeParam) {
         String environment = System.getProperty("environment", "dev");
         String baseUriParam = environment + ".api.base.uri";
-        System.out.println("baseUriParam = " + baseUriParam);
+        logger.warn("baseUriParam = " + baseUriParam);
         String baseUri = PropertyFileReader.getProperty(baseUriParam);
         return baseUri + PropertyFileReader.getProperty(requestTypeParam);
     }
