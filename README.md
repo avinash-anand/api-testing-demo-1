@@ -6,3 +6,4 @@ mvn test -Dtest=RunSuite -Denvironment=qa
 
 mvn test -Dtest=RunSuite -Denvironment=perf
 
+Assuming JSON response.
